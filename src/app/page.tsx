@@ -1,10 +1,11 @@
+import DeathForm from "@/components/death-form";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
 export default function Home() {
   return (
@@ -21,7 +22,7 @@ export default function Home() {
         <CardContent>
           {/* เดี๋ยวเราจะสร้าง Client Component สำหรับฟอร์มแบบสอบถามมาใส่ตรงนี้ */}
           <div className="text-center text-sm text-zinc-600 py-12 border border-dashed border-zinc-800 rounded-lg mt-4">
-            [ Interactive Form Component Goes Here ]
+            <DeathForm />
           </div>
         </CardContent>
       </Card>

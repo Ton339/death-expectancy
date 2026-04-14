@@ -5,9 +5,15 @@ import { motion } from "framer-motion";
 interface AnimatedClockProps {
   isResultScreen: boolean;
   isIntro: boolean;
+  isTransitioning?: boolean;
 }
 
-export function AnimatedClock({ isResultScreen, isIntro }: AnimatedClockProps) {
+export function AnimatedClock({
+  isResultScreen,
+  isIntro,
+  isTransitioning,
+}: AnimatedClockProps) {
+  const isFullClock = isResultScreen || isTransitioning;
   const opacity = isResultScreen ? 1 : 0.25;
   const animationDuration = isResultScreen ? 2 : 120;
 

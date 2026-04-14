@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { calculateRemainingDays, type FormData } from "@/app/actions/calculate";
 import { AnimatedClock } from "./animated-clock";
 import { WheelPicker } from "./wheel-picker";
+
 
 interface StepConfig {
   key: string;
@@ -81,98 +83,6 @@ const steps: StepConfig[] = [
   },
 ];
 
-interface FormData {
-  age: number;
-  weight: number;
-  height: number;
-  sleep: number;
-  diet: number;
-  alcohol: number;
-  smoke: number;
-  exercise: number;
-}
-
-function calculateRemainingDays(data: FormData): number {
-  const { age, weight, height, sleep, diet, alcohol, smoke, exercise } = data;
-
-  // Base Days
-  const baseDays = (70 - age) * 365;
-  let modifiers = 0;
-
-  // BMI calculation
-  const heightInMeters = height / 100;
-  const bmi = weight / (heightInMeters * heightInMeters);
-
-  if (bmi < 18.5) {
-    modifiers -= 300;
-  } else if (bmi >= 18.5 && bmi <= 24.9) {
-    modifiers += 0;
-  } else if (bmi >= 25.0 && bmi <= 29.9) {
-    modifiers -= 200;
-  } else if (bmi >= 30.0) {
-    modifiers -= 600;
-  }
-
-  // Sleep
-  if (sleep < 5) {
-    modifiers -= 400;
-  } else if (sleep >= 5 && sleep <= 6) {
-    modifiers -= 150;
-  } else if (sleep >= 7 && sleep <= 8) {
-    modifiers += 200;
-  } else {
-    modifiers += 0;
-  }
-
-  // Diet
-  if (diet <= 1) {
-    modifiers -= 300;
-  } else if (diet >= 2 && diet <= 3) {
-    modifiers += 40;
-  } else if (diet >= 4 && diet <= 5) {
-    modifiers += 250;
-  } else if (diet >= 6) {
-    modifiers += 500;
-  }
-
-  // Alcohol
-  if (alcohol === 0) {
-    modifiers += 100;
-  } else if (alcohol >= 1 && alcohol <= 4) {
-    modifiers += 0;
-  } else if (alcohol >= 5 && alcohol <= 15) {
-    modifiers -= 200;
-  } else if (alcohol >= 16) {
-    modifiers -= 500;
-  }
-
-  // Smoke
-  if (smoke === 0) {
-    modifiers += 0;
-  } else if (smoke >= 1 && smoke <= 6) {
-    modifiers -= 200;
-  } else if (smoke >= 7 && smoke <= 10) {
-    modifiers -= 500;
-  } else if (smoke >= 11 && smoke <= 20) {
-    modifiers -= 1500;
-  } else if (smoke >= 21) {
-    modifiers -= 3500;
-  }
-
-  // Exercise
-  if (exercise === 0) {
-    modifiers -= 300;
-  } else if (exercise >= 1 && exercise <= 2) {
-    modifiers += 100;
-  } else if (exercise >= 3 && exercise <= 4) {
-    modifiers += 300;
-  } else if (exercise >= 5) {
-    modifiers += 500;
-  }
-
-  return Math.max(0, baseDays + modifiers);
-}
-
 function getResultContent(days: number) {
   if (days < 3000) {
     return {
@@ -222,6 +132,7 @@ export default function DeathExpectancyCalculator() {
   const [displayedDays, setDisplayedDays] = useState(0);
   const [countdownComplete, setCountdownComplete] = useState(false);
   const [resultDays, setResultDays] = useState<number | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handleValueChange = useCallback(
     (value: number) => {
@@ -234,39 +145,50 @@ export default function DeathExpectancyCalculator() {
     [currentStep],
   );
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
       setHasInteracted(false);
     } else {
-      // Calculate and show results
-      const result = calculateRemainingDays(formData);
-      setResultDays(result);
-      setShowResult(true);
+      setIsTransitioning(true);
 
-      // Animate countdown from base days to result
-      const baseDays = (70 - formData.age) * 365;
-      setDisplayedDays(baseDays);
+      try {
+        // ยิงข้อมูลไปให้ Server Action คำนวณ
+        const result = await calculateRemainingDays(formData);
 
-      const duration = 2500;
-      const startTime = Date.now();
-      const diff = baseDays - result;
+        // คำนวณเสร็จแล้วก็ทำ Animation ต่อ
+        setTimeout(() => {
+          setResultDays(result);
+          setShowResult(true);
+          setIsTransitioning(false);
 
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = Math.round(baseDays - diff * eased);
-        setDisplayedDays(current);
+          // Animate countdown from base days to result
+          const baseDays = (70 - formData.age) * 365;
+          setDisplayedDays(baseDays);
 
-        if (progress < 1) {
+          const duration = 2500;
+          const startTime = Date.now();
+          const diff = baseDays - result;
+
+          const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(baseDays - diff * eased);
+            setDisplayedDays(current);
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              setCountdownComplete(true);
+            }
+          };
+
           requestAnimationFrame(animate);
-        } else {
-          setCountdownComplete(true);
-        }
-      };
-
-      requestAnimationFrame(animate);
+        }, 1000); // ปรับเวลาลงนิดนึงเพราะเราหน่วงที่ฝั่ง Server มาแล้ว 1 วินาที
+      } catch (error) {
+        console.error("Failed to calculate fate:", error);
+      }
     }
   };
 
@@ -292,7 +214,11 @@ export default function DeathExpectancyCalculator() {
       </div>
 
       {/* Animated Clock Background */}
-      <AnimatedClock isResultScreen={showResult} isIntro={currentStep === -1} />
+      <AnimatedClock
+        isResultScreen={showResult}
+        isIntro={currentStep === -1}
+        isTransitioning={isTransitioning}
+      />
 
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6">
@@ -331,7 +257,7 @@ export default function DeathExpectancyCalculator() {
             </motion.div>
           )}
 
-          {currentStep >= 0 && !showResult && (
+          {currentStep >= 0 && !showResult && !isTransitioning && (
             <motion.div
               key={`step-${currentStep}`}
               initial={{ y: 50, opacity: 0 }}
@@ -397,7 +323,7 @@ export default function DeathExpectancyCalculator() {
 
         {/* Next Button */}
         <AnimatePresence>
-          {currentStep >= 0 && !showResult && (
+          {currentStep >= 0 && !showResult && !isTransitioning && (
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{

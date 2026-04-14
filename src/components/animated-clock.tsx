@@ -10,24 +10,25 @@ interface AnimatedClockProps {
 
 export function AnimatedClock({
   isResultScreen,
-  isIntro,
   isTransitioning,
 }: AnimatedClockProps) {
   const isFullClock = isResultScreen || isTransitioning;
   const opacity = isResultScreen ? 1 : 0.25;
   const animationDuration = isResultScreen ? 2 : 120;
 
+  const clockAnimation = {
+    opacity: isTransitioning ? 0.8 : opacity,
+    y: isFullClock ? 0 : -80,
+    WebkitMaskPosition: isFullClock ? "0% 0%" : "0% 100%",
+    maskPosition: isFullClock ? "0% 0%" : "0% 100%",
+  };
+
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
       <motion.div
         className="relative w-80 h-80 md:w-96 md:h-96"
         initial={false}
-        animate={{
-          opacity: isTransitioning ? 0.8 : opacity,
-          y: isFullClock ? 0 : -80,
-          WebkitMaskPosition: isFullClock ? "0% 0%" : "0% 100%",
-          maskPosition: isFullClock ? "0% 0%" : "0% 100%",
-        }}
+        animate={clockAnimation}
         transition={{ duration: 2, ease: "easeInOut" }}
         style={{
           WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",

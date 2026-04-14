@@ -6,7 +6,6 @@ import { calculateRemainingDays, type FormData } from "@/app/actions/calculate";
 import { AnimatedClock } from "./animated-clock";
 import { WheelPicker } from "./wheel-picker";
 
-
 interface StepConfig {
   key: string;
   title: string;
@@ -212,7 +211,7 @@ export default function DeathExpectancyCalculator() {
     >
       {/* URL indicator */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 text-zinc-500 text-sm z-10">
-        /web-url
+        /death-expectancy.vercel.app
       </div>
 
       {/* Animated Clock Background */}

@@ -222,6 +222,7 @@ export default function DeathExpectancyCalculator() {
   const [displayedDays, setDisplayedDays] = useState(0);
   const [countdownComplete, setCountdownComplete] = useState(false);
   const [resultDays, setResultDays] = useState<number | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handleValueChange = useCallback(
     (value: number) => {
@@ -239,34 +240,39 @@ export default function DeathExpectancyCalculator() {
       setCurrentStep((prev) => prev + 1);
       setHasInteracted(false);
     } else {
-      // Calculate and show results
-      const result = calculateRemainingDays(formData);
-      setResultDays(result);
-      setShowResult(true);
+      setIsTransitioning(true);
 
-      // Animate countdown from base days to result
-      const baseDays = (70 - formData.age) * 365;
-      setDisplayedDays(baseDays);
+      setTimeout(() => {
+        // Calculate and show results
+        const result = calculateRemainingDays(formData);
+        setResultDays(result);
+        setShowResult(true);
+        setIsTransitioning(false);
 
-      const duration = 2500;
-      const startTime = Date.now();
-      const diff = baseDays - result;
+        // Animate countdown from base days to result
+        const baseDays = (70 - formData.age) * 365;
+        setDisplayedDays(baseDays);
 
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = Math.round(baseDays - diff * eased);
-        setDisplayedDays(current);
+        const duration = 2500;
+        const startTime = Date.now();
+        const diff = baseDays - result;
 
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          setCountdownComplete(true);
-        }
-      };
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(baseDays - diff * eased);
+          setDisplayedDays(current);
 
-      requestAnimationFrame(animate);
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            setCountdownComplete(true);
+          }
+        };
+
+        requestAnimationFrame(animate);
+      }, 2000);
     }
   };
 
@@ -292,7 +298,7 @@ export default function DeathExpectancyCalculator() {
       </div>
 
       {/* Animated Clock Background */}
-      <AnimatedClock isResultScreen={showResult} isIntro={currentStep === -1} />
+      <AnimatedClock isResultScreen={showResult} isIntro={currentStep === -1} isTransitioning={isTransitioning} />
 
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6">
@@ -331,7 +337,7 @@ export default function DeathExpectancyCalculator() {
             </motion.div>
           )}
 
-          {currentStep >= 0 && !showResult && (
+          {currentStep >= 0 && !showResult && !isTransitioning && (
             <motion.div
               key={`step-${currentStep}`}
               initial={{ y: 50, opacity: 0 }}
@@ -363,7 +369,7 @@ export default function DeathExpectancyCalculator() {
               key="result"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 2 }}
               className={`flex flex-col items-center text-center ${resultContent.text}`}
             >
               <h2 className="text-lg whitespace-pre-line mb-6">
@@ -397,7 +403,7 @@ export default function DeathExpectancyCalculator() {
 
         {/* Next Button */}
         <AnimatePresence>
-          {currentStep >= 0 && !showResult && (
+          {currentStep >= 0 && !showResult && !isTransitioning && (
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{

@@ -18,11 +18,26 @@ export function AnimatedClock({
   const animationDuration = isResultScreen ? 2 : 120;
 
   return (
-    <div
-      className="absolute inset-0 flex items-center justify-center pointer-events-none"
-      style={{ opacity }}
-    >
-      <div className="relative w-80 h-80 md:w-96 md:h-96">
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <motion.div
+        className="relative w-80 h-80 md:w-96 md:h-96"
+        initial={false}
+        animate={{
+          opacity: isTransitioning ? 0.8 : opacity,
+          y: isFullClock ? 0 : -80,
+          WebkitMaskPosition: isFullClock ? "0% 0%" : "0% 100%",
+          maskPosition: isFullClock ? "0% 0%" : "0% 100%",
+        }}
+        transition={{ duration: 2, ease: "easeInOut" }}
+        style={{
+          WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+          maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+          WebkitMaskSize: "100% 200%",
+          maskSize: "100% 200%",
+          WebkitMaskRepeat: "no-repeat",
+          maskRepeat: "no-repeat",
+        }}
+      >
         {/* Clock Face */}
         <svg viewBox="0 0 200 200" className="w-full h-full">
           {/* Clock circle */}
@@ -145,7 +160,7 @@ export function AnimatedClock({
         >
           <div className="w-full h-full bg-zinc-500 rounded-full" />
         </motion.div>
-      </div>
+      </motion.div>
     </div>
   );
 }

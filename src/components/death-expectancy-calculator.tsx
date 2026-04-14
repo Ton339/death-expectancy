@@ -289,7 +289,7 @@ export default function DeathExpectancyCalculator() {
               key="result"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 2 }}
               className={`flex flex-col items-center text-center ${resultContent.text}`}
             >
               <h2 className="text-lg whitespace-pre-line mb-6">

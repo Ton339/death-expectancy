@@ -31,8 +31,7 @@ export function AnimatedClock({
         animate={clockAnimation}
         transition={{ duration: 2, ease: "easeInOut" }}
         style={{
-          WebkitMaskImage:
-            "linear-gradient(to bottom, black 60%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
           maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
           WebkitMaskSize: "100% 200%",
           maskSize: "100% 200%",
@@ -55,18 +54,18 @@ export function AnimatedClock({
 
           {/* Roman numerals */}
           {[
-            { num: "XII", x: 100, y: 22 },
-            { num: "I", x: 130, y: 28 },
-            { num: "II", x: 155, y: 50 },
-            { num: "III", x: 172, y: 104 },
-            { num: "IV", x: 155, y: 155 },
-            { num: "V", x: 130, y: 178 },
-            { num: "VI", x: 100, y: 188 },
-            { num: "VII", x: 70, y: 178 },
-            { num: "VIII", x: 42, y: 155 },
-            { num: "IX", x: 28, y: 104 },
-            { num: "X", x: 42, y: 50 },
-            { num: "XI", x: 70, y: 28 },
+            { num: "XII", x: 100, y: 30 },
+            { num: "I", x: 130, y: 40 },
+            { num: "II", x: 155, y: 70 },
+            { num: "III", x: 165, y: 101 },
+            { num: "IV", x: 155, y: 135 },
+            { num: "V", x: 135, y: 160 },
+            { num: "VI", x: 100, y: 170 },
+            { num: "VII", x: 65, y: 160 },
+            { num: "VIII", x: 45, y: 135 },
+            { num: "IX", x: 35, y: 101 },
+            { num: "X", x: 45, y: 70 },
+            { num: "XI", x: 70, y: 40 },
           ].map((item) => (
             <text
               key={item.num}

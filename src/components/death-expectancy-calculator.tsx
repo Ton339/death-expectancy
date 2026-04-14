@@ -236,6 +236,8 @@ export default function DeathExpectancyCalculator() {
   );
 
   const handleNext = () => {
+    if (isTransitioning) return;
+
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
       setHasInteracted(false);
@@ -433,7 +435,8 @@ export default function DeathExpectancyCalculator() {
                   : { duration: 0.3 },
               }}
               onClick={handleNext}
-              className="absolute bottom-12 py-3 text-xl text-zinc-100 transition-colors tracking-wide"
+              disabled={isTransitioning}
+              className={`absolute bottom-12 py-3 text-xl transition-colors tracking-wide ${isTransitioning ? "text-zinc-600 cursor-not-allowed" : "text-zinc-100"}`}
             >
               {currentStep === steps.length - 1
                 ? "ล่วงรู้วาระสุดท้าย"

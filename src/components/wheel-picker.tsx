@@ -90,11 +90,11 @@ export function WheelPicker({ min, max, defaultValue, onValueChange }: WheelPick
   return (
     <div className="relative h-[180px] w-full overflow-hidden">
       {/* Gradient overlays */}
-      <div className="absolute top-0 left-0 right-0 h-[60px] bg-gradient-to-b from-black to-transparent z-10 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-[60px] bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
+      {/* <div className="absolute top-0 left-0 right-0 h-[60px] bg-gradient-to-b from-black to-transparent z-10 pointer-events-none" /> */}
+      {/* <div className="absolute bottom-0 left-0 right-0 h-[60px] bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" /> */}
       
       {/* Selection indicator */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-[60px] border-t border-b border-zinc-700 pointer-events-none z-0" />
+      {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-[60px] border-t border-b border-zinc-700 pointer-events-none z-0" /> */}
       
       {/* Animated display during spin */}
       <AnimatePresence>

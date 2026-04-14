@@ -145,7 +145,7 @@ export default function DeathExpectancyCalculator() {
     [currentStep],
   );
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (isTransitioning) return;
 
     if (currentStep < steps.length - 1) {

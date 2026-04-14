@@ -49,7 +49,7 @@ export function WheelPicker({ min, max, defaultValue, onValueChange }: WheelPick
     }
     
     spinDown()
-  }, [min, max, defaultValue])
+  }, [min, max, defaultValue, values.length, defaultIndex, controls])
 
   const handleScroll = () => {
     if (!containerRef.current || isAnimating) return
@@ -107,7 +107,7 @@ export function WheelPicker({ min, max, defaultValue, onValueChange }: WheelPick
               animate={controls}
               className="flex flex-col items-center"
             >
-              {values.map((value, index) => {
+              {values.map((value) => {
                 return (
                   <div
                     key={value}

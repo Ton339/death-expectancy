@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { calculateRemainingDays, type FormData } from "@/app/actions/calculate";
 import { AnimatedClock } from "./animated-clock";

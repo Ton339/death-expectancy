@@ -10,7 +10,6 @@ interface AnimatedClockProps {
 
 export function AnimatedClock({
   isResultScreen,
-  isIntro,
   isTransitioning,
 }: AnimatedClockProps) {
   const isFullClock = isResultScreen || isTransitioning;

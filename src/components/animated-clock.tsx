@@ -12,7 +12,7 @@ export function AnimatedClock({
   isResultScreen,
   isTransitioning,
 }: AnimatedClockProps) {
-  const isFullClock = isResultScreen || isTransitioning;
+  const isFullClock = !!isTransitioning;
   const opacity = isResultScreen ? 1 : 0.25;
   const animationDuration = isResultScreen ? 2 : 120;
 
@@ -31,7 +31,8 @@ export function AnimatedClock({
         animate={clockAnimation}
         transition={{ duration: 2, ease: "easeInOut" }}
         style={{
-          WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 60%, transparent 100%)",
           maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
           WebkitMaskSize: "100% 200%",
           maskSize: "100% 200%",
